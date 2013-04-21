@@ -80,51 +80,12 @@ public class CallActivity extends Activity {
     	
 	}
     
-    private class PhoneCallListener extends PhoneStateListener {
-
-        private boolean isPhoneCalling = false;
-
-        @Override
-        public void onCallStateChanged(int state, String incomingNumber) {
-
-            if (TelephonyManager.CALL_STATE_RINGING == state) {
-            }
-
-            if (TelephonyManager.CALL_STATE_OFFHOOK == state) {
-                isPhoneCalling = true;
-            }
-
-            if (TelephonyManager.CALL_STATE_IDLE == state) {
-                if (isPhoneCalling) {
-
-                    // restart app
-                    Intent i = getBaseContext().getPackageManager()
-                            .getLaunchIntentForPackage(
-                                    getBaseContext().getPackageName());
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(i);
-
-                    isPhoneCalling = false;
-                    
-                    // turn on wifi if off
-    				wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-                    if (!wifi.isWifiEnabled())
-    					wifi.setWifiEnabled(true);
-                    
-                }
-
-            }
-        }
-    }
-    
+   
     public void makeCall() {
-    	PhoneCallListener phoneListener = new PhoneCallListener();
-	    TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-	    telephonyManager.listen(phoneListener, PhoneStateListener.LISTEN_CALL_STATE);
-	     
 		try {
             Intent callIntent = new Intent(Intent.ACTION_CALL);
             callIntent.setData(Uri.parse("tel:"+et.getText().toString()));
+			et.setText("");
             startActivity(callIntent);
         } catch (ActivityNotFoundException activityException) {
         } 
