@@ -179,7 +179,7 @@ public class MainActivity extends Activity {
 	}
 
 
-	@SuppressLint("SimpleDateFormat")
+	@SuppressLint({ "SimpleDateFormat", "SdCardPath" })
 	private void getCallDetails() {
 
 		String FILENAME = "position_file";
@@ -211,6 +211,7 @@ public class MainActivity extends Activity {
 
 		TextView tv = (TextView)findViewById(R.id.text);
 		StringBuffer sb = new StringBuffer();
+		@SuppressWarnings("deprecation")
 		Cursor managedCursor = managedQuery( CallLog.Calls.CONTENT_URI,null, null,null, null);
 
 		/*
