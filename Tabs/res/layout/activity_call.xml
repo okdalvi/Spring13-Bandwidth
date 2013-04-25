@@ -5,10 +5,10 @@
 
     <TextView
         android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="238dp"
+        android:layout_height="35dp"
         android:layout_marginTop="10dp"
-        android:layout_weight="0.21"
+        android:layout_weight="0.00"
         android:text="Enter Phone Number:"
         android:textSize="15sp" />
 
@@ -25,28 +25,28 @@
 
     <Button
         android:id="@+id/button1"
-        android:layout_width="220dp"
-        android:layout_height="100dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginTop="20dp"
+        android:layout_width="152dp"
+        android:layout_height="64dp"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="60dp"
         android:text="Call"
         android:textSize="20sp" />
 
     <Button
         android:id="@+id/button4"
-        android:layout_width="220dp"
-        android:layout_height="100dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginTop="10dp"
+        android:layout_width="152dp"
+        android:layout_height="64dp"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="20dp"
         android:text="WiFi Call"
         android:textSize="20sp" />
 
     <Button
         android:id="@+id/button5"
-        android:layout_width="220dp"
-        android:layout_height="100dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginTop="10dp"
+        android:layout_width="152dp"
+        android:layout_height="64dp"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="20dp"
         android:text="Cell Call"
         android:textSize="20sp" />
 

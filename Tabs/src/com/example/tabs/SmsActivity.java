@@ -2,11 +2,13 @@ package com.example.tabs;
 
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.telephony.SmsManager;
@@ -21,7 +23,7 @@ import android.widget.Toast;
 
 public class SmsActivity extends Activity {
 	
-	EditText et;
+	EditText et, etMsg;
 	TextView tv;
 	Button s, cl, ws, cs;
 	WifiManager wifi;
@@ -47,6 +49,7 @@ public class SmsActivity extends Activity {
     
     public void start() {
     	et = (EditText) findViewById(R.id.editText1);
+    	etMsg = (EditText) findViewById(R.id.editText2);
     	s = (Button) findViewById(R.id.button1);
     	ws = (Button) findViewById(R.id.button4);
     	cs = (Button) findViewById(R.id.button5);
@@ -82,9 +85,16 @@ public class SmsActivity extends Activity {
     public void sendSms() {
     	try {
 			SmsManager smsManager = SmsManager.getDefault();
-			smsManager.sendTextMessage(et.getText().toString(), null, "test message", null, null);
+			String msg = etMsg.getText().toString();
+			smsManager.sendTextMessage(et.getText().toString(), null, msg, null, null);
 			Toast.makeText(getApplicationContext(), "SMS sent",	Toast.LENGTH_LONG).show();
+			// store the sent sms in the sent folder 
+	    	ContentValues values = new ContentValues();
+	    	values.put("address", et.getText().toString());
+	    	values.put("body", msg);
+	    	getContentResolver().insert(Uri.parse("content://sms/sent"), values);
 			et.setText("");
+			etMsg.setText("");
         } catch (ActivityNotFoundException activityException) {
         }    
     }
