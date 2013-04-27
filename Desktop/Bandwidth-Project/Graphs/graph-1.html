@@ -1,0 +1,77 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+
+  <title>Graph-1</title>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.7.min.js"></script>
+</head>
+
+<body>
+  
+  <div id="main">
+    <h6>Graph of all calls made for a specific source phone number</h6>
+	<div id="chart_div" style="width: 900px; height: 500px;"></div>
+
+  </div>
+  
+  <script type="text/javascript">		
+	google.load("visualization", "1", {packages:["corechart"]});
+	google.setOnLoadCallback(drawChart);
+    function drawChart() {
+	Parse.initialize("pPowuNIyQqkuCJaexMKnhAlbzDbTa1mi2qRqjSsk", "o3d6OdaXbwbHpenQvKUSu7E5NrtsWMZuD6cpkPvc");
+	
+	//IncomingCalls IncomingSMSs OutgoingCalls OutgoingSMSs
+	//Calls: Destination Source callDuration date_str dir
+	//SMS: Destination Source body date(ms)
+	//Outgoing: sender table maintains only outgoing calls and sms
+	//Incoming: receiver table maintains only incoming and missed calls and sms
+	
+	var IncomingCalls = Parse.Object.extend("IncomingCalls");
+	var OutgoingCalls = Parse.Object.extend("OutgoingCalls");
+			
+	var inQuery = new Parse.Query(IncomingCalls);
+	var outQuery = new Parse.Query(OutgoingCalls);
+	
+	outQuery.equalTo("Source", "+19199121071");
+	
+	var collection = outQuery.collection();
+	
+	var i = 0;
+	var j = 0;
+	var k = 0;
+
+	collection.fetch({
+			success: function(collection) {
+				collection.each(function(object) {
+					var dir = object.get("dir");
+					if(dir == 'INCOMING')
+						i++;
+					else if(dir == 'OUTGOING')
+						j++;
+					else
+						k++;
+
+					var data = google.visualization.arrayToDataTable([
+						['Source', 'Incoming', 'Outgoing', 'Missed'],
+						['9199121071', i, j, k]
+					]);
+
+					var options = {
+					  title: 'Call statistics',
+					  vAxis: {title: 'Source',  titleTextStyle: {color: 'red'}},
+					  hAxis: {minValue: 0}
+					};
+
+					var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+					chart.draw(data, options);
+							});
+						},
+						error: function(collection, error) {
+						}
+					});
+}
+</script>
+</body>
+</html>
