@@ -142,9 +142,11 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CallLog;
 import android.telephony.TelephonyManager;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
@@ -158,7 +160,15 @@ import com.parse.ParseQuery;
 public class MainActivity extends Activity {
 
 	public String myPhoneNumber= null;
-	ParseObject testObject = null;
+	ParseObject IncomingCalls = null;
+	ParseObject IncomingSMSs = null;
+	TextView content;
+	StringBuffer sb;
+	
+	public MainActivity(){
+		
+		sb = new StringBuffer();
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -166,8 +176,12 @@ public class MainActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		content = (TextView) findViewById(R.id.text);
+		content.setMovementMethod(new ScrollingMovementMethod());
 		Parse.initialize(this, "pPowuNIyQqkuCJaexMKnhAlbzDbTa1mi2qRqjSsk", "o3d6OdaXbwbHpenQvKUSu7E5NrtsWMZuD6cpkPvc");
 		getCallDetails();
+		inSms();
+	    //outSms();
 
 	}
 
@@ -187,6 +201,7 @@ public class MainActivity extends Activity {
 		Integer position=-1;
 		Integer count = 0;
 		boolean newFile = true;
+		int flag = 0;
 		
 		// create a File object for the parent directory
 		// Remember that this requires a SD card to be present
@@ -239,7 +254,6 @@ public class MainActivity extends Activity {
 			e.printStackTrace();
 		}
 
-		sb.append( "Call Details :");
 
 		if (!newFile)
 			managedCursor.moveToPosition(position);
@@ -247,6 +261,8 @@ public class MainActivity extends Activity {
 		try
 		{
 			while ( managedCursor.moveToNext() ) {
+				
+				flag=1;
 				position=managedCursor.getPosition();
 				
 				phNumber = managedCursor.getString( number );
@@ -276,39 +292,36 @@ public class MainActivity extends Activity {
 					break;
 				}
 
-				}
+				}//switch
 
-				/*
-				 * To display the call details on the phone
-				 * */
-				sb.append( "\nPhone Number:--- "+phNumber +" \nCall Type:--- "+dir+" \nCall Date:--- "+date_str+" \nCall duration in sec :--- "+callDuration );
-				sb.append("\n----------------------------------");
-
-				/*
-				 * To upload the call details to Parse
-				 * */
-
-
-				/**
-				 * If the parse database is empty ie when the first entry is being inserted
-				 */
-				testObject = new ParseObject("TestObject");
-				if (dir.equalsIgnoreCase("Outgoing"))
+				
+				IncomingCalls = new ParseObject("IncomingCalls");
+				/*if (dir.equalsIgnoreCase("Outgoing"))
 				{
 					testObject.put("Source", myPhoneNumber);
 					testObject.put("Destination", phNumber);
-				}
-				else
-				{
-					testObject.put("Destination", myPhoneNumber);
-					testObject.put("Source", phNumber);
-				}
-				testObject.put("dir", dir);
-				testObject.put("date_str", date_str);
-				testObject.put("callDuration", callDuration);
-				testObject.saveInBackground();
+				}*/
+				//else
+				//{
+				if (dir.equalsIgnoreCase("INCOMING") || dir.equalsIgnoreCase("MISSED") && flag==1){
+					
+					sb.append( "\n Call Details :");
+					sb.append( "\nPhone Number:--- "+phNumber +" \nCall Type:--- "+dir+" \nCall Date:--- "+date_str+" \nCall duration in sec :--- "+callDuration );
+					sb.append("\n----------------------------------");
+					IncomingCalls.put("Destination", myPhoneNumber);
+					IncomingCalls.put("Source", phNumber);
+				//}
+				IncomingCalls.put("dir", dir);
+				IncomingCalls.put("date_str", date_str);
+				IncomingCalls.put("callDuration", callDuration);
+				IncomingCalls.saveInBackground();
 				count++;
+				}//if
 			}//while
+			if(flag==0){
+				
+				sb.append("No new logs to be displayed");
+			}
 		}
 		catch (Exception e)
 		{
@@ -352,5 +365,72 @@ public class MainActivity extends Activity {
 		        }
 		    }
 		});
-	}
+	}//getCallDetails
+	
+	@SuppressLint("SdCardPath")
+	private void inSms() {
+		
+		String FILENAME = "inSMS";
+		Integer inPosition = -1;
+		File directory = new File("/sdcard/SMSDetails/");
+		// have the object build the directory structure, if needed.
+		directory.mkdirs();		
+		File file = new File(directory,FILENAME);
+		boolean newFile = true;
+		
+		String address=null,date=null,body=null;
+		
+		try {
+
+			FileInputStream fis = new FileInputStream(file);
+			InputStreamReader inputStreamReader = new InputStreamReader(fis);
+			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+			String str = bufferedReader.readLine(); 
+			inPosition = Integer.parseInt(str);
+			Log.d("SMSlogsValue", "Current value in inSMS file is: " + inPosition);
+			fis.close();
+			newFile = false;
+
+		} catch (Exception e) {
+			Log.d("SMSfileExists", "Error opening file. File doesn't exist or some other error. Here is the stackTrace: \n" + e.toString() + "\nWill try to create a new file");
+			e.printStackTrace();
+		}
+		
+	    Cursor cursor = getContentResolver().query(Uri.parse("content://sms/inbox"), null, null, null, null);
+	    if (!newFile)
+			cursor.moveToPosition(inPosition);
+
+		    while(cursor.moveToNext()){
+		    
+		      inPosition = cursor.getPosition();
+		      
+		      address = cursor.getString(cursor.getColumnIndex("address"));
+		      date = cursor.getString(cursor.getColumnIndex("date"));
+		      body = cursor.getString(cursor.getColumnIndex("body"));
+		      
+		      IncomingSMSs = new ParseObject("IncomingSMSs");
+		     
+				IncomingSMSs.put("Destination", myPhoneNumber);
+				IncomingSMSs.put("Source", address);
+				IncomingSMSs.put("date", date);
+				IncomingSMSs.put("body", body);
+				IncomingSMSs.saveInBackground();
+		      
+		    }//while
+		    
+		    
+		    try {
+
+				FileOutputStream fos = new FileOutputStream(file);
+				byte[] buffer = inPosition.toString().getBytes();
+				fos.write(buffer);
+				fos.close();			
+				Log.d("fileWrite", "Writing inbox position: " + inPosition + " succeeded. :)");
+
+			} catch (Exception e) {
+				Log.d("fileWrite", "Writing inbox position: " + inPosition + " failed!");
+				e.printStackTrace();
+			}
+		    cursor.close();
+	    }//inSMS
 }
