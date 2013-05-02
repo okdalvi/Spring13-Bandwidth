@@ -2,25 +2,20 @@
 <head>
   <meta charset="utf-8">
 
-  <title>Graph-1</title>
+  <title>Call-Statistics-1</title>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
   <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.7.min.js"></script>
 </head>
 
 <body>
-  
-  <div id="main">
-    <h6>Graph of all calls made for a specific source phone number</h6>
-	<div id="chart_div" style="width: 900px; height: 500px;"></div>
+<div id="chart_div" style="width: 900px; height: 500px;"></div>
 
-  </div>
-  
-  <script type="text/javascript">		
+<script type="text/javascript">		
 	google.load("visualization", "1", {packages:["corechart"]});
 	google.setOnLoadCallback(drawChart);
     function drawChart() {
-	Parse.initialize("pPowuNIyQqkuCJaexMKnhAlbzDbTa1mi2qRqjSsk", "o3d6OdaXbwbHpenQvKUSu7E5NrtsWMZuD6cpkPvc");
+	Parse.initialize("pPowuNIyQqkuCJaexMKnhAlbzDbTa1mi2qRqjSsk", "aV5fgAAeCR508sQzRv9b7la6ph4nh3iAi1WRwjLl");
 	
 	//IncomingCalls IncomingSMSs OutgoingCalls OutgoingSMSs
 	//Calls: Destination Source callDuration date_str dir
@@ -35,13 +30,55 @@
 	var outQuery = new Parse.Query(OutgoingCalls);
 	
 	outQuery.equalTo("Source", "+19199121071");
+	outQuery.equalTo("Destination", "9195228376");
 	
-	var collection = outQuery.collection();
+	var outgoingCount = 0;
 	
-	var i = 0;
-	var j = 0;
-	var k = 0;
+	outQuery.find({
+	  success: function(outgoingCall) {
+		outgoingCount = outgoingCall.length;
+		inQuery.equalTo("Destination", "+19199121071");
+		//inQuery.equalTo("Destination", "+19195228376");
+		//document.write("You are here");
+		inQuery.count({
+			success: function(count) {
+				//document.write("Incoming count = " + count);
+				
+				var data = google.visualization.arrayToDataTable([
+						['Source', 'Calls Made', 'Call Successful'],
+						['Sender', outgoingCall.length, count]
+					]);
 
+				var options = {
+						title: 'Call statistics',
+						hAxis: {title: 'Source',  titleTextStyle: {color: 'red'}},
+						vAxis: {minValue: 0}
+					};
+
+				var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+				chart.draw(data, options);
+			},
+			error: function(error) {
+			}
+		})
+	},
+	error: function(error) {
+	}
+});
+
+/*
+	var Team = Parse.Object.extend("Team");
+	var teamQuery = new Parse.Query(Team);
+	teamQuery.greaterThan("winPct", 0.5);
+	var userQuery = new Parse.Query(Parse.User);
+	userQuery.matchesKeyInQuery("hometown", "city", teamQuery);
+	userQuery.find({ 
+	success: function(results) {
+		// results has the list of users with a hometown team with a winning record
+  }
+});*/
+	
+/*	
 	collection.fetch({
 			success: function(collection) {
 				collection.each(function(object) {
@@ -60,17 +97,17 @@
 
 					var options = {
 					  title: 'Call statistics',
-					  vAxis: {title: 'Source',  titleTextStyle: {color: 'red'}},
-					  hAxis: {minValue: 0}
+					  hAxis: {title: 'Source',  titleTextStyle: {color: 'red'}},
+					  vAxis: {minValue: 0}
 					};
 
-					var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+					var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
 					chart.draw(data, options);
 							});
 						},
 						error: function(collection, error) {
 						}
-					});
+					}); */
 }
 </script>
 </body>
