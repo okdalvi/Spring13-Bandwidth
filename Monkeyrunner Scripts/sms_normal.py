@@ -324,3 +324,13 @@ print "*************************************************************************
 print "Test Suite Completed!!!"
 
 print "********************************************************************************"
+import subprocess
+ 
+html = "http://192.168.1.12/Graphs/call-graph-2.html"
+ChromePath = r'C:\Users\omi\AppData\Local\Google\Chrome\Application\Chrome.exe'
+subprocess.Popen("%s %s" % (ChromePath, html))
+
+print "********************************************************************************"	
+print "GRAPH VIEWED!!!"
+
+print "********************************************************************************"
