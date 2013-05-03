@@ -1,14 +1,12 @@
 from com.android.monkeyrunner import MonkeyRunner, MonkeyDevice
 device = MonkeyRunner.waitForConnection()
 print "********************************************************************************"
-print "Welcome to the Republic Wireless Automated Testing Suite"
+print "Welcome to the Republic Wireless Automated Call Testing Suite"
 
 print "********************************************************************************"
 
-device.touch(241, 114, "DOWN_AND_UP")     # switch to sms tab
-MonkeyRunner.sleep(0.5)
 
-print "Want to make Wi-fi SMS (1 for YES 0 for NO)?"
+print "Want to make Wi-fi calls (1 for YES 0 for NO)?"
 f1 = int(raw_input())
 
 
@@ -23,7 +21,7 @@ if f1==1:
 		num_array_wifi.append((num1))
 
 		
-print "Want to make Cellular SMS (1 for YES 0 for NO)?"
+print "Want to make Cellular calls (1 for YES 0 for NO)?"
 g1 = int(raw_input())
 
 if g1==1:
@@ -37,7 +35,7 @@ if g1==1:
 		num_array_cellular.append((num2))
 		
 
-print "Want to make Normal SMS (1 for YES 0 for NO)?"
+print "Want to make Normal calls (1 for YES 0 for NO)?"
 h1 = int(raw_input())
 
 if h1==1:
@@ -55,12 +53,12 @@ if h1==1:
    
 	
 if f1==1:
-	print "SMS Automation WiFi started!!!"
+	print "Call Automation WiFi started!!!"
 	for q1 in range(n1):
 		number= num_array_wifi[q1]
 	
 	
-		device.touch(44, 296, "DOWN_AND_UP")       #go to text box
+		device.touch(56, 343, "DOWN_AND_UP")       #go to text box
 		MonkeyRunner.sleep(0.5)
 	
 		print(number)
@@ -132,25 +130,25 @@ if f1==1:
 				device.press('KEYCODE_0','DOWN_AND_UP')
 				MonkeyRunner.sleep(0.5)
 				i=i+1
-		print "SMS number",(q1+1) 
+		print "Call number",(q1+1) 
 		print "in progress!!!"
 		MonkeyRunner.sleep(0.5)
-		device.touch(247, 652, "DOWN_AND_UP")       #press sms key
-		MonkeyRunner.sleep(5)
-		       
-		
-		print "SMS number",(q1+1) 
+		device.touch(236, 582, "DOWN_AND_UP")       #press call key
+		MonkeyRunner.sleep(30)
+		device.touch(241, 689, "DOWN_AND_UP")       #end button
+		device.press('KEYCODE_BACK','DOWN_AND_UP')
+		print "WiFi Call number",(q1+1) 
 		print "completed!!!"
 		MonkeyRunner.sleep(10)
 		
 		
 if g1==1:
-	print "SMS Automation Cellular started!!!"
+	print "Call Automation Cellular started!!!"
 	for q2 in range(n2):
 		number= num_array_cellular[q2]
 	
 	
-		device.touch(44, 296, "DOWN_AND_UP")       #go to text box
+		device.touch(56, 343, "DOWN_AND_UP")       #go to text box
 		MonkeyRunner.sleep(0.5)
 	
 		print(number)
@@ -222,23 +220,25 @@ if g1==1:
 				device.press('KEYCODE_0','DOWN_AND_UP')
 				MonkeyRunner.sleep(0.5)
 				i=i+1
-		print "SMS number",(q2+1) 
+		print "Call number",(q2+1) 
 		print "in progress!!!"
 		
 		MonkeyRunner.sleep(0.5)
-		device.touch(239, 762, "DOWN_AND_UP")       #press sms key
-		MonkeyRunner.sleep(5)
-		print "SMS number",(q2+1) 
+		device.touch(247, 715, "DOWN_AND_UP")       #press call key
+		MonkeyRunner.sleep(30)
+		device.touch(241, 689, "DOWN_AND_UP")       #end button
+		device.press('KEYCODE_BACK','DOWN_AND_UP')
+		print "Cellular Call number",(q2+1) 
 		print "completed!!!"
 		MonkeyRunner.sleep(10)
 		
 if h1==1:
-	print "SMS Automation MS started!!!"
+	print "Call Automation Normal started!!!"
 	for q3 in range(n3):
 		number= num_array_cell[q3]
 	
 	
-		device.touch(44, 296, "DOWN_AND_UP")       #go to text box
+		device.touch(56, 343, "DOWN_AND_UP")       #go to text box
 		MonkeyRunner.sleep(0.5)
 	
 		print(number)
@@ -310,27 +310,52 @@ if h1==1:
 				device.press('KEYCODE_0','DOWN_AND_UP')
 				MonkeyRunner.sleep(0.5)
 				i=i+1
-		print "SMS",(q3+1) 
+		print "Call number",(q3+1) 
 		print "in progress!!!"
 		
 		MonkeyRunner.sleep(0.5)
-		device.touch(258, 539, "DOWN_AND_UP")       #press sms key
-		MonkeyRunner.sleep(5)
-		print "SMS number",(q3+1) 
+		device.touch(232, 474, "DOWN_AND_UP")       #press call key
+		MonkeyRunner.sleep(30)
+		device.touch(241, 689, "DOWN_AND_UP")       #end button
+		device.press('KEYCODE_BACK','DOWN_AND_UP')
+		print "Normal Call number",(q3+1) 
 		print "completed!!!"
 		MonkeyRunner.sleep(10)
 
 print "********************************************************************************"	
-print "Test Suite Completed!!!"
+print "Call Testing Suite Completed!!!"
 
 print "********************************************************************************"
+
 import subprocess
  
-html = "http://192.168.1.12/Graphs/call-graph-2.html"
+html = "http://152.14.247.148/Graphs/call-graph-1.html"
 ChromePath = r'C:\Users\omi\AppData\Local\Google\Chrome\Application\Chrome.exe'
 subprocess.Popen("%s %s" % (ChromePath, html))
 
 print "********************************************************************************"	
-print "GRAPH VIEWED!!!"
+print "GRAPH1 VIEWED!!!"
+
+print "********************************************************************************"
+
+import subprocess
+ 
+html1 = "http://152.14.247.148/Graphs/call-graph-2.html"
+ChromePath = r'C:\Users\omi\AppData\Local\Google\Chrome\Application\Chrome.exe'
+subprocess.Popen("%s %s" % (ChromePath, html1))
+
+print "********************************************************************************"	
+print "GRAPH2 VIEWED!!!"
+
+print "********************************************************************************"
+
+import subprocess
+ 
+html2 = "http://152.14.247.148/Graphs/call-graph-3.html"
+ChromePath = r'C:\Users\omi\AppData\Local\Google\Chrome\Application\Chrome.exe'
+subprocess.Popen("%s %s" % (ChromePath, html2))
+
+print "********************************************************************************"	
+print "GRAPH3 VIEWED!!!"
 
 print "********************************************************************************"
